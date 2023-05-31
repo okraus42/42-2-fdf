@@ -6,11 +6,11 @@
 #    By: okraus <okraus@student.42prague.com>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/16 15:04:52 by okraus            #+#    #+#              #
-#    Updated: 2023/05/28 14:04:06 by okraus           ###   ########.fr        #
+#    Updated: 2023/05/31 17:49:08 by okraus           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME	:= so_long
+NAME	:= fdf
 CCC		:= cc
 CFLAGS	:= -Wextra -Wall -Werror -Wunreachable-code -Ofast
 LIBMLX	:= ./MLX42
@@ -21,7 +21,7 @@ LIB1	:= libft/libft.a
 LIB2	:= $(LIBMLX)/build/libmlx42.a -ldl -lglfw -pthread -lm
 # SRCS	:= $(shell find ./src -iname "*.c")
 # SRCS	:= test.c
-SRCS	:=	ft_fdf.c
+SRCS	:=	ft_fdf.c ft_atoi_base.c
 OBJS	:= ${SRCS:.c=.o}
 
 all: libft libmlx $(NAME)

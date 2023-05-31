@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_so_long.c                                       :+:      :+:    :+:   */
+/*   ft_atoi_base.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: okraus <okraus@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/16 15:35:23 by okraus            #+#    #+#             */
-/*   Updated: 2023/05/29 16:46:11 by okraus           ###   ########.fr       */
+/*   Updated: 2023/05/31 17:58:22 by okraus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,6 @@ unsigned int	ft_atoi_base(const char *base, char* str)
 {
 	int				baselen;
 	int				i;
-	int				x;
 	unsigned int	num;
 
 	num = 0;
@@ -54,6 +53,7 @@ unsigned int	ft_atoi_base(const char *base, char* str)
 	return (num);	
 }
 
+/*
 int	main(void)
 {
 	const char	*base = "0123456789ABCDEF";
@@ -63,3 +63,4 @@ int	main(void)
 	printf("%x\n", ft_atoi_base(base, "FFAB01CD"));
 	return (0);
 }
+*/

@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   so_long.h                                          :+:      :+:    :+:   */
+/*   fdf.h                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: okraus <okraus@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/04 15:43:08 by okraus            #+#    #+#             */
-/*   Updated: 2023/05/28 18:36:45 by okraus           ###   ########.fr       */
+/*   Updated: 2023/05/31 19:31:23 by okraus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef SO_LONG_H
+#ifndef FDF_H
 
-# define SO_LONG_H
+# define FDF_H
 
 // INCLUDES
 
@@ -37,7 +37,7 @@
 // DEFINITIONS
 
 // STRUCTURES
-// SO_LONG structure
+// FDF structure
 
 // typedef struct map_s
 // {
@@ -65,96 +65,54 @@
 //	int		steps;		// number of steps player did
 // } map_t;
 
+
+// typedef struct s_point
+// {
+// 	double	x; //x
+// 	double	y; //y
+// 	double	z; //z
+// 	int		c; //colour it contains <<8 |= 0xFF, if no, then 0;
+// }	t_point;
+
+typedef struct s_point
+{
+	double	x;
+	double	y;
+	double	z;
+	unsigned int		c;
+}	t_point;
+
+typedef struct s_coord
+{
+	int		x;
+	int		y;
+	unsigned int		c;
+}	t_coord;
+
 typedef struct s_map
 {
-	char	**m;
-	int		w;
-	int		h;
-	int		p;
-	int		px;
-	int		py;
-	int		ct;
-	int		cr;
-	int		*c;
-	int		*cx;
-	int		*cy;
-	int		et;
-	int		*e;
-	int		*ex;
-	int		*ey;
+	char	**m;	//
+	t_point	**mo;	//original map coordinates
+	t_point	**mr;	//rotated orig
+	t_coord	**ms;	//screen
+	int		w;		//width of map
+	int		h;		//height of map
+	int		d;		//distance of points
+	int		max;	//max height on map
+	int		min;	//min height on map
 	int		x;
-	int		xx;
-	int		xy;
-	int		steps;
+	int		y;
 }	t_map;
-
-typedef struct s_control
-{
-	int		w;
-	int		s;
-	int		a;
-	int		d;
-	int		space;
-	int		ctrl;
-	int		time;
-}	t_controls;
-
-typedef struct s_imgs
-{
-	mlx_instance_t	*pi;
-	mlx_instance_t	*ei;
-	mlx_instance_t	*ci;
-	mlx_instance_t	*c2i;
-	mlx_instance_t	*dci;
-	mlx_instance_t	*doi;
-}	t_imgs;
-
 
 typedef struct s_max
 {
-	mlx_t		*mlx;
-	t_map		*map;
-	t_controls	*key;
-	t_imgs		*img;
+	mlx_t			*mlx;
+	t_map			*map;
+	mlx_image_t		*img;
 }	t_max;
 
 // PROTOTYPES
 
 //	ft_draw
-void	ft_put_background(t_max *max);
-void	ft_put_collectibles(t_max *max);
-void	ft_put_collectibles2(t_max *max);
-void	ft_put_opendoor(t_max *max);
-void	ft_put_door(t_max *max);
-void	ft_put_enemies(t_max *max);
-void	ft_put_player(t_max *max);
-
-//	ft_player
-void	ft_moveplayer(t_max *max, int d);
-
-//	ft_enemy
-void	ft_moveenemies(t_max *max);
-void	ft_check_enemy(t_max *max);
-
-// ft_collectible
-void	ft_remove_collectible(t_max *max, int x, int y);
-void	ft_open_door(t_max *max);
-void	ft_check_door(t_max *max);
-void	ft_check_time(t_max *max);
-
-//	ft_init
-void	ft_init_key(t_controls *key, int a);
-void	ft_init_map(t_map *map);
-void	ft_init_keys(t_controls *key);
-
-//	ft_update
-void	ft_update_map(t_map *map);
-
-//	ft_test
-void	ft_test_map(t_map *map);
-void	ft_check_map(t_map *map);
-void	ft_check_flood(t_map *map);
-void	ft_flood_map(t_map *map, int x, int y);
-void	ft_print_map(t_map *map);
 
 #endif

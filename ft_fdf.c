@@ -6,7 +6,7 @@
 /*   By: okraus <okraus@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/16 15:35:23 by okraus            #+#    #+#             */
-/*   Updated: 2023/06/02 18:42:18 by okraus           ###   ########.fr       */
+/*   Updated: 2023/06/04 13:31:49 by okraus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ void	ft_plot_line_low(t_max *max, int x[3], int y[3])
 	dx = x[1] - x[0];
 	dy = y[1] - y[0];
 	yi = 1;
-	if (dx < 0)
+	if (dy < 0)
 	{
 		yi = -1;
 		dy *= -1;
@@ -82,6 +82,7 @@ void	ft_plot_line_low(t_max *max, int x[3], int y[3])
 	{
 		// create function to fix colour
 		mlx_put_pixel(max->img, x[2], y[2], 0xFFFF00FF);
+		//ft_printf("x0[%i]|x1[%i]|x2[%i]|y0[%i]|y1[%i]|y2[%i]|dx[%i]|dy[%i]|yi[%i]|d[%i]\n", x[0], x[1], x[2], y[0], y[1], y[2], dx, dy, yi, d);
 		if (d > 0)
 		{
 			y[2] = y[2] + yi;
@@ -91,6 +92,7 @@ void	ft_plot_line_low(t_max *max, int x[3], int y[3])
 			d = d + 2 * dy;
 		x[2]++;
 	}
+	ft_printf("\n");
 }
 
 // plotLineHigh(x0, y0, x1, y1)
@@ -136,6 +138,7 @@ void	ft_plot_line_high(t_max *max, int x[3], int y[3])
 	{
 		// create function to fix colour
 		mlx_put_pixel(max->img, x[2], y[2], 0xFFFF00FF);
+		//ft_printf("x0[%i]|x1[%i]|x2[%i]|y0[%i]|y1[%i]|y2[%i]|dx[%i]|dy[%i]|xi[%i]|d[%i]\n", x[0], x[1], x[2], y[0], y[1], y[2], dx, dy, xi, d);
 		if (d > 0)
 		{
 			x[2] = x[2] + xi;
@@ -182,12 +185,15 @@ void	ft_plot_line_hor(t_max *max, int i, int j)
 	t_map	*m;
 	int		x[3];
 	int		y[3];
+	int		c[2];
 
 	m = max->map;
 	x[0] = m->ms[i][j].x;
 	y[0] = m->ms[i][j].y;
+	c[0] = m->ms[i][j].c;
 	x[1] = m->ms[i][j + 1].x;
 	y[1] = m->ms[i][j + 1].y;
+	c[1] = m->ms[i][j + 1].c;
 	if (ft_abs(y[1] - y[0]) < ft_abs(x[1] - x[0]))
 	{
 		if (x[0] > x[1])
@@ -213,12 +219,15 @@ void	ft_plot_line_ver(t_max *max, int i, int j)
 	t_map	*m;
 	int		x[3];
 	int		y[3];
+	int		c[2];
 
 	m = max->map;
 	x[0] = m->ms[i][j].x;
 	y[0] = m->ms[i][j].y;
+	c[0] = m->ms[i][j].c;
 	x[1] = m->ms[i + 1][j].x;
 	y[1] = m->ms[i + 1][j].y;
+	c[1] = m->ms[i + 1][j].c;
 	if (ft_abs(y[1] - y[0]) < ft_abs(x[1] - x[0]))
 	{
 		if (x[0] > x[1])
@@ -245,9 +254,9 @@ void	ft_place_line(t_max *max, int i, int j)
 
 	m = max->map;
 	if (i != m->h - 1)
-		ft_plot_line_hor(max, i , j);
-	if (i != m->w - 1)
 		ft_plot_line_ver(max, i , j);
+	if (j != m->w - 1)
+		ft_plot_line_hor(max, i , j);
 }
 
 void	ft_colourize(void *param)
@@ -260,10 +269,10 @@ void	ft_colourize(void *param)
 	max = param;
 	m = max->map;
 	i = 0;
-	while (i < m->h - 1)
+	while (i < m->h)
 	{
 		j = 0;
-		while (j < m->w - 1)
+		while (j < m->w)
 		{
 			//check that pixel is in image
 			ft_place_line(max, i , j);
@@ -350,8 +359,8 @@ void	ft_init_row(t_map *map, int i)
 	map->mr[i] = malloc((map->w) * sizeof(t_point));;
 	while (j < map->w)
 	{
-		map->mr[i][j].y = map->mo[i][j].y + (9 * i);
-		map->mr[i][j].x = map->mo[i][j].x + (9 * j);
+		map->mr[i][j].y = map->mo[i][j].y; //+ (9 * i);
+		map->mr[i][j].x = map->mo[i][j].x; //+ (9 * j);
 		map->mr[i][j].z = map->mo[i][j].z;
 		map->mr[i][j].c = map->mo[i][j].c;
 		j++;

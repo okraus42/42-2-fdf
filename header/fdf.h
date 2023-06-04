@@ -6,7 +6,7 @@
 /*   By: okraus <okraus@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/04 15:43:08 by okraus            #+#    #+#             */
-/*   Updated: 2023/05/31 19:31:23 by okraus           ###   ########.fr       */
+/*   Updated: 2023/06/04 17:34:33 by okraus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,8 +100,15 @@ typedef struct s_map
 	int		d;		//distance of points
 	int		max;	//max height on map
 	int		min;	//min height on map
+	int		xs;		//x shift
+	int		ys;		//y shift
 	int		x;
 	int		y;
+	int		z;		//level of zoom
+	double	q;		//height of stuff
+	double	ax;
+	double	ay;		//angles of rotation around x/y/z axis;
+	double	az;
 }	t_map;
 
 typedef struct s_max

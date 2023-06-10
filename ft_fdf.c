@@ -6,7 +6,7 @@
 /*   By: okraus <okraus@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/16 15:35:23 by okraus            #+#    #+#             */
-/*   Updated: 2023/06/04 18:25:59 by okraus           ###   ########.fr       */
+/*   Updated: 2023/06/10 16:44:47 by okraus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -555,10 +555,11 @@ void	ft_fill_coord(t_map *map)
 	{
 		row = ft_split(map->m[i], ' ');
 		ft_fill_row(map, row, i);
+		ft_free_split(row);
 		i++;
 	}
 	map->mo[map->h] = NULL;
-	free(row);
+	ft_free_split(row);
 }
 
 void	ft_init_row(t_map *map, int i)
@@ -722,6 +723,29 @@ void	ft_init_map(t_map *map)
 	map->az = 0;
 }
 
+void	ft_free_double(void **ptr)
+{
+	int	i;
+
+	i = 0;
+	while (ptr[i])
+	{
+		free(ptr[i]);
+		ptr[i] = NULL;
+		i++;
+	}
+	free(ptr);
+	ptr = NULL;
+}
+
+void	ft_free(t_map* map)
+{
+	ft_free_split(map->m);
+	ft_free_double((void **)map->mo);
+	ft_free_double((void **)map->mr);
+	ft_free_double((void **)map->ms);
+}
+
 void	ft_fdf(t_max *max, char *mapfile)
 {
 	mlx_t				*mlx;
@@ -743,7 +767,7 @@ void	ft_fdf(t_max *max, char *mapfile)
 	//ft_print_map(max->map);
 	ft_put_strarray(max->map->m);
 	mlx = mlx_init(1600, 900, "FDF", true);
-	if (!max->mlx)
+	if (!mlx)
 	{
 		puts(mlx_strerror(mlx_errno));
 		exit(-999);
@@ -769,6 +793,7 @@ void	ft_fdf(t_max *max, char *mapfile)
 	ft_printf("ooopsie\n");
 	mlx_loop(max->mlx);
 	ft_printf("ooops\n");
+	ft_free(&mapt);
 	mlx_terminate(max->mlx);
 }
 

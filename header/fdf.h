@@ -6,7 +6,7 @@
 /*   By: okraus <okraus@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/04 15:43:08 by okraus            #+#    #+#             */
-/*   Updated: 2023/06/04 17:34:33 by okraus           ###   ########.fr       */
+/*   Updated: 2023/06/10 16:26:37 by okraus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,8 +61,7 @@
 //						//add enemy direction?
 //	int		x;			// exit status 0 closed, 1 open
 //	int		xx;			// exit X
-//	int		xy;			// exit Y
-//	int		steps;		// number of steps player did
+//	int		xy;			// exit max->r of steps player did
 // } map_t;
 
 

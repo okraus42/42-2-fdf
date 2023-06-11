@@ -6,7 +6,7 @@
 /*   By: okraus <okraus@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/16 15:35:23 by okraus            #+#    #+#             */
-/*   Updated: 2023/06/10 16:44:47 by okraus           ###   ########.fr       */
+/*   Updated: 2023/06/11 14:30:45 by okraus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,31 +103,6 @@ void	ft_hook(void *param)
 //             D = D + 2*dy
 //         end if
 // By switching the x and y axis an implementation for positive or negative steep slopes can be written as
-
-unsigned int	ft_uabsdif(unsigned int a, unsigned int b)
-{
-	if (a < b)
-		return (b - a);
-	else
-		return (a - b);
-}
-
-void	ft_uswap(unsigned int *a, unsigned int *b)
-{
-	unsigned int	c;
-
-	c = *b;
-	*b = *a;
-	*a = c;
-}
-
-unsigned int	ft_umin(unsigned int a, unsigned int b)
-{
-	if (a < b)
-		return (a);
-	else
-		return (b);
-}
 
 unsigned int	ft_mix_colour(int x[3], int y[3], unsigned int c[2])
 {
@@ -290,19 +265,11 @@ void	ft_plot_line_high(t_max *max, int x[3], int y[3], unsigned int c[2])
 //         end if
 //     end if
 
-void	ft_swap(int *a, int *b)
-{
-	int	c;
-
-	c = *a;
-	*a = *b;
-	*b = c;
-}
-
-void	ft_super_swap(int a[3], int b[3])
+void	ft_super_swap(int a[3], int b[3], unsigned int c[2])
 {
 	ft_swap(&a[0], &a[1]);
 	ft_swap(&b[0], &b[1]);
+	ft_uswap(&c[0], &c[1]);
 }
 
 void	ft_plot_line_hor(t_max *max, int i, int j)
@@ -495,8 +462,6 @@ void	ft_colourize(void *param)
 
 // -----------------------------------------------------------------------------
 
-unsigned int	ft_atoi_base(const char *base, char* str);
-
 int	ft_get_color(char *str)
 {
 	int	i;
@@ -559,7 +524,6 @@ void	ft_fill_coord(t_map *map)
 		i++;
 	}
 	map->mo[map->h] = NULL;
-	ft_free_split(row);
 }
 
 void	ft_init_row(t_map *map, int i)

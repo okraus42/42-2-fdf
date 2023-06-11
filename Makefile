@@ -6,7 +6,7 @@
 #    By: okraus <okraus@student.42prague.com>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/16 15:04:52 by okraus            #+#    #+#              #
-#    Updated: 2023/05/31 17:49:08 by okraus           ###   ########.fr        #
+#    Updated: 2023/06/11 14:14:35 by okraus           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,7 +21,7 @@ LIB1	:= libft/libft.a
 LIB2	:= $(LIBMLX)/build/libmlx42.a -ldl -lglfw -pthread -lm
 # SRCS	:= $(shell find ./src -iname "*.c")
 # SRCS	:= test.c
-SRCS	:=	ft_fdf.c ft_atoi_base.c
+SRCS	:=	ft_fdf.c
 OBJS	:= ${SRCS:.c=.o}
 
 all: libft libmlx $(NAME)

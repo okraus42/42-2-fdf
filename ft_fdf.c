@@ -6,7 +6,7 @@
 /*   By: okraus <okraus@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/16 15:35:23 by okraus            #+#    #+#             */
-/*   Updated: 2023/06/11 14:30:45 by okraus           ###   ########.fr       */
+/*   Updated: 2023/06/11 15:11:18 by okraus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,74 +14,47 @@
 
 void	ft_fill_screen(t_map *map);
 
+void	ft_hook2(t_max	*max)
+{
+	if (mlx_is_key_down(max->mlx, MLX_KEY_W))
+		max->map->ax -= 0.03125;
+	if (mlx_is_key_down(max->mlx, MLX_KEY_S))
+		max->map->ax += 0.03125;
+	if (mlx_is_key_down(max->mlx, MLX_KEY_A))
+		max->map->az -= 0.03125;
+	if (mlx_is_key_down(max->mlx, MLX_KEY_D))
+		max->map->az += 0.03125;
+	if (mlx_is_key_down(max->mlx, MLX_KEY_Q))
+		max->map->ay -= 0.03125;
+	if (mlx_is_key_down(max->mlx, MLX_KEY_E))
+		max->map->ay += 0.03125;
+}
+
 void	ft_hook(void *param)
 {
 	t_max	*max;
 
 	max = param;
 	if (mlx_is_key_down(max->mlx, MLX_KEY_ESCAPE))
-	{
 		mlx_close_window(max->mlx);
-	}
 	if (mlx_is_key_down(max->mlx, MLX_KEY_UP))
-	{
 		max->map->ys += 50;
-		//ft_printf("up  %i\n", max->map->ys);
-	}
 	if (mlx_is_key_down(max->mlx, MLX_KEY_DOWN))
-	{
 		max->map->ys -= 50;
-	}
 	if (mlx_is_key_down(max->mlx, MLX_KEY_LEFT))
-	{
 		max->map->xs += 50;
-	}
 	if (mlx_is_key_down(max->mlx, MLX_KEY_RIGHT))
-	{
 		max->map->xs -= 50;
-	}
 	if (mlx_is_key_down(max->mlx, MLX_KEY_KP_ADD) && max->map->z < 64)
-	{
 		max->map->z += 1;
-	}
 	if (mlx_is_key_down(max->mlx, MLX_KEY_KP_SUBTRACT) && max->map->z > 1)
-	{
 		max->map->z -= 1;
-	}
 	if (mlx_is_key_down(max->mlx, MLX_KEY_KP_MULTIPLY) && max->map->q > 1)
-	{
 		max->map->q -= 1;
-	}
 	if (mlx_is_key_down(max->mlx, MLX_KEY_KP_DIVIDE) && max->map->q < 64)
-	{
 		max->map->q += 1;
-	}
-	if (mlx_is_key_down(max->mlx, MLX_KEY_Q))
-	{
-		max->map->ax -= 0.03125;
-	}
-	if (mlx_is_key_down(max->mlx, MLX_KEY_E))
-	{
-		max->map->ax += 0.03125;
-	}
-	if (mlx_is_key_down(max->mlx, MLX_KEY_W))
-	{
-		max->map->az -= 0.03125;
-	}
-	if (mlx_is_key_down(max->mlx, MLX_KEY_S))
-	{
-		max->map->az += 0.03125;
-	}
-	if (mlx_is_key_down(max->mlx, MLX_KEY_A))
-	{
-		max->map->ay -= 0.03125;
-	}
-	if (mlx_is_key_down(max->mlx, MLX_KEY_D))
-	{
-		max->map->ay += 0.03125;
-	}
+	ft_hook2(max);
 }
-
 
 // plotLineLow(x0, y0, x1, y1)
 //     dx = x1 - x0
@@ -114,28 +87,14 @@ unsigned int	ft_mix_colour(int x[3], int y[3], unsigned int c[2])
 	d[1] = ft_abs(x[1] - x[0]) + ft_abs(y[1] - y[0]);
 	if (!d[1])
 		d[1] = 1;
-	// rgb[0][0] = (ft_umin(c[0] & 0xFF000000, c[1] & 0xFF000000)) >> 24;
-	// rgb[0][1] = (ft_umin(c[0] & 0xFF0000, c[1] & 0xFF0000)) >> 16;
-	// rgb[0][2] = (ft_umin(c[0] & 0xFF00, c[1] & 0xFF00)) >> 8;
-	// rgb[0][3] = ft_umin(c[0] & 0xFF, c[1] & 0xFF);
 	rgb[0] = (ft_uabsdif(c[0] & 0xFF000000, c[1] & 0xFF000000)) >> 24;
 	rgb[1] = (ft_uabsdif(c[0] & 0xFF0000, c[1] & 0xFF0000)) >> 16;
 	rgb[2] = (ft_uabsdif(c[0] & 0xFF00, c[1] & 0xFF00)) >> 8;
 	rgb[3] = ft_uabsdif(c[0] & 0xFF, c[1] & 0xFF);
-	// ft_printf("testcolour2\n");
-	// ft_printf("\nx0 = %i, x1 = %i, x2 = %i\n", x[0], x[1], x[2]);
-	// ft_printf("y0 = %i, y1 = %i, y2 = %i\n", y[0], y[1], y[2]);
-	// ft_printf("c0 = %x, c1 = %x\n", c[0], c[1]);
-	// ft_printf("d0 = %u, d1 = %u\n", d[0], d[1]);
-	// ft_printf("r0 = %x, r1 = %x, r2 = %x, r3 = %x\n", r[0], r[1], r[2], r[3]);
 	if ((c[0] & 0xFF000000) < (c[1] & 0xFF000000))
-	{
 		r[0] = ((rgb[0] * d[0]) / d[1] + ((c[0] & 0xFF000000) >> 24)) << 24;
-	}
 	else
-	{
 		r[0] = (((c[1] & 0xFF000000) >> 24) - ((rgb[0] * d[0]) / d[1])) << 24;
-	}
 	if ((c[0] & 0xFF0000) < (c[1] & 0xFF0000))
 		r[1] = (rgb[1] * d[0] / d[1] + ((c[0] & 0xFF0000) >> 16)) << 16;
 	else
@@ -148,11 +107,6 @@ unsigned int	ft_mix_colour(int x[3], int y[3], unsigned int c[2])
 		r[3] = rgb[3] * d[0] / d[1] + (c[0] & 0xFF);
 	else
 		r[3] = (c[0] & 0xFF) - rgb[3] * d[0] / d[1];
-	// ft_printf("\nx0 = %i, x1 = %i, x2 = %i\n", x[0], x[1], x[2]);
-	// ft_printf("y0 = %i, y1 = %i, y2 = %i\n", y[0], y[1], y[2]);
-	// ft_printf("c0 = %x, c1 = %x\n", c[0], c[1]);
-	// ft_printf("d0 = %u, d1 = %u\n", d[0], d[1]);
-	// ft_printf("r0 = %x, r1 = %x, r2 = %x, r3 = %x\n", r[0], r[1], r[2], r[3]);
 	return (r[0] | r[1] | r[2] | r[3]);
 }
 
@@ -176,10 +130,8 @@ void	ft_plot_line_low(t_max *max, int x[3], int y[3], unsigned int c[2])
 	y[2] = y[0];
 	while (x[2] <= x[1])
 	{
-		// create function to fix colour
 		if (x[2] > 0 && x[2] < 1600 && y[2] > 0 && y[2] < 900)
 			mlx_put_pixel(max->img, x[2], y[2], ft_mix_colour(x, y, c));
-		//ft_printf("x0[%i]|x1[%i]|x2[%i]|y0[%i]|y1[%i]|y2[%i]|dx[%i]|dy[%i]|yi[%i]|d[%i]\n", x[0], x[1], x[2], y[0], y[1], y[2], dx, dy, yi, d);
 		if (d > 0)
 		{
 			y[2] = y[2] + yi;
@@ -232,13 +184,8 @@ void	ft_plot_line_high(t_max *max, int x[3], int y[3], unsigned int c[2])
 	y[2] = y[0];
 	while (y[2] <= y[1])
 	{
-		// create function to fix colour
-		// ft_printf("testalpha0\n");
-		// ft_printf("x0[%i]|x1[%i]|x2[%i]|y0[%i]|y1[%i]|y2[%i]|dx[%i]|dy[%i]|xi[%i]|d[%i]\n", x[0], x[1], x[2], y[0], y[1], y[2], dx, dy, xi, d);
 		if (x[2] > 0 && x[2] < 1600 && y[2] > 0 && y[2] < 900)
 			mlx_put_pixel(max->img, x[2], y[2], ft_mix_colour(x, y, c));
-		// ft_printf("testalpha1\n");
-		// ft_printf("x0[%i]|x1[%i]|x2[%i]|y0[%i]|y1[%i]|y2[%i]|dx[%i]|dy[%i]|xi[%i]|d[%i]\n", x[0], x[1], x[2], y[0], y[1], y[2], dx, dy, xi, d);
 		if (d > 0)
 		{
 			x[2] = x[2] + xi;
@@ -445,13 +392,9 @@ void	ft_colourize(void *param)
 	while (i < m->h)
 	{
 		j = 0;
-		//ft_printf("test-z1\n");
 		while (j < m->w)
 		{
-			//check that pixel is in image
-			//ft_printf("test-z2\n");
 			ft_place_line(max, i , j);
-			//ft_printf("test-z3\n");
 			if (m->ms[i][j].x > 0 && m->ms[i][j].x < 1600 && m->ms[i][j].y > 0 && m->ms[i][j].y < 900)
 				mlx_put_pixel(max->img, m->ms[i][j].x, m->ms[i][j].y, m->ms[i][j].c);
 			j++;
@@ -470,15 +413,11 @@ int	ft_get_color(char *str)
 	while (str && str[i])
 	{
 		str[i] = ft_toupper(str[i]);
-		//ft_printf("%c\n", str[i]);
 		i++;
 	}
 	i = 0;
 	while (str && str[i] && str[i] != ',')
-	{
-		//ft_printf("%d\n", str[i]);
 		i++;
-	}
 	if (str[i] == ',' && str[i + 1] == '0' && str[i + 2] == 'X')
 		return(ft_atoi_base("0123456789ABCDEF", &str[i + 3]) << 8 | 0xFF);
 	return (0);
@@ -496,7 +435,7 @@ void	ft_fill_row(t_map *map, char **row, int i)
 	if (!map->w)
 		map->w = j;
 	if (map->w != j)
-		exit(-1);//wrong9 *  map need to free stuff
+		exit(-1);//wrong map need to free stuff
 	j = 0;
 	map->mo[i] = malloc((map->w) * sizeof(t_point));;
 	while (row[j])
@@ -570,7 +509,6 @@ void	ft_screen_row(t_map *map, int i)
 			map->ms[i][j].c = map->mr[i][j].c;
 		else
 			map->ms[i][j].c = 0xFFFF00FF;
-		//ft_printf("i=%i,j=%i,x=%i,y=%i\n", i, j, map->ms[i][j].x, map->ms[i][j].y);
 		j++;
 	}
 }
@@ -723,11 +661,9 @@ void	ft_fdf(t_max *max, char *mapfile)
 	ft_fill_coord(max->map);
 	ft_show_coord(max->map);
 	ft_init_coord(max->map);
-	//ft_rotate_coord(max->map);
 	ft_show_coord2(max->map);
 	ft_fill_screen(max->map);
 	ft_show_coord3(max->map);
-	//ft_update_map(max->map);
 	//ft_print_map(max->map);
 	ft_put_strarray(max->map->m);
 	mlx = mlx_init(1600, 900, "FDF", true);
@@ -751,12 +687,9 @@ void	ft_fdf(t_max *max, char *mapfile)
 		puts(mlx_strerror(mlx_errno));
 		exit(EXIT_FAILURE);
 	}
-	ft_printf("ohno\n");
 	mlx_loop_hook(max->mlx, ft_hook, max);
 	mlx_loop_hook(max->mlx, ft_colourize, max);
-	ft_printf("ooopsie\n");
 	mlx_loop(max->mlx);
-	ft_printf("ooops\n");
 	ft_free(&mapt);
 	mlx_terminate(max->mlx);
 }

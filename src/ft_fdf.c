@@ -6,7 +6,7 @@
 /*   By: okraus <okraus@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/16 15:35:23 by okraus            #+#    #+#             */
-/*   Updated: 2023/06/18 15:50:02 by okraus           ###   ########.fr       */
+/*   Updated: 2023/06/18 16:35:09 by okraus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -849,7 +849,7 @@ int32_t	main(int32_t argc, char *argv[])
 
 	if (argc != 2)
 	{
-		ft_printf_fd(2, "%9CError%0C\n");
+		ft_printf_fd(2, "%91CError%0C\n%61CWrong numbr of arguments%0C\n");
 		return (1);
 	}
 	ft_fdf(&max, argv[1]);

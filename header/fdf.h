@@ -64,7 +64,6 @@
 //	int		xy;			// exit max->r of steps player did
 // } map_t;
 
-
 // typedef struct s_point
 // {
 // 	double	x; //x
@@ -75,17 +74,17 @@
 
 typedef struct s_point
 {
-	double	x;
-	double	y;
-	double	z;
-	unsigned int		c;
+	double			x;
+	double			y;
+	double			z;
+	unsigned int	c;
 }	t_point;
 
 typedef struct s_coord
 {
-	int		x;
-	int		y;
-	unsigned int		c;
+	int				x;
+	int				y;
+	unsigned int	c;
 }	t_coord;
 
 typedef struct s_map

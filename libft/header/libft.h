@@ -6,7 +6,7 @@
 /*   By: okraus <okraus@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/14 13:43:29 by okraus            #+#    #+#             */
-/*   Updated: 2023/06/11 11:58:18 by okraus           ###   ########.fr       */
+/*   Updated: 2023/06/17 15:55:52 by okraus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -215,5 +215,15 @@ int				ft_print_binocthex_fd(unsigned char b, int fd, t_output *t);
 char			*ft_string_binocthex(unsigned char b, t_output *t);
 int				ft_putcolour_fd(int fd, t_output *t);
 int				ft_print_colour_fd(int fd, t_output	*t);
+int				ft_print_colour_fd_0(int fd, t_output *t);
+int				ft_print_colour_fd_1(int fd, t_output *t);
+int				ft_print_colour_fd_2(int fd, t_output *t);
+int				ft_print_colour_fd_3(int fd, t_output *t);
+int				ft_print_colour_fd_4(int fd, t_output *t);
+int				ft_print_colour_fd_5(int fd, t_output *t);
+int				ft_print_colour_fd_6(int fd, t_output *t);
+int				ft_print_colour_fd_7(int fd, t_output *t);
+int				ft_print_colour_fd_8(int fd, t_output *t);
+int				ft_print_colour_fd_9(int fd, t_output *t);
 
 #endif

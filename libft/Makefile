@@ -6,7 +6,7 @@
 #    By: okraus <okraus@student.42prague.com>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/14 13:43:18 by okraus            #+#    #+#              #
-#    Updated: 2023/06/11 11:59:27 by okraus           ###   ########.fr        #
+#    Updated: 2023/06/17 15:57:00 by okraus           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -120,7 +120,9 @@ SRC_GNL		=	get_next_line \
 
 # ft_printf functions
 
-SRC_PF		= 	ft_padding \
+SRC_PF		= 	ft_colour_1 \
+				ft_colour_2 \
+				ft_padding \
 				ft_printf_utils \
 				ft_printf \
 				ft_printformat \

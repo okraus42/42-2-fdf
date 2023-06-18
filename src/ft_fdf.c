@@ -6,11 +6,11 @@
 /*   By: okraus <okraus@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/16 15:35:23 by okraus            #+#    #+#             */
-/*   Updated: 2023/06/11 15:11:18 by okraus           ###   ########.fr       */
+/*   Updated: 2023/06/18 10:34:15 by okraus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "header/fdf.h"
+#include "../header/fdf.h"
 
 void	ft_fill_screen(t_map *map);
 
@@ -51,7 +51,7 @@ void	ft_hook(void *param)
 		max->map->z -= 1;
 	if (mlx_is_key_down(max->mlx, MLX_KEY_KP_MULTIPLY) && max->map->q > 1)
 		max->map->q -= 1;
-	if (mlx_is_key_down(max->mlx, MLX_KEY_KP_DIVIDE) && max->map->q < 64)
+	if (mlx_is_key_down(max->mlx, MLX_KEY_KP_DIVIDE) && max->map->q < 256)
 		max->map->q += 1;
 	ft_hook2(max);
 }
@@ -75,7 +75,6 @@ void	ft_hook(void *param)
 //         else
 //             D = D + 2*dy
 //         end if
-// By switching the x and y axis an implementation for positive or negative steep slopes can be written as
 
 unsigned int	ft_mix_colour(int x[3], int y[3], unsigned int c[2])
 {
@@ -162,7 +161,6 @@ void	ft_plot_line_low(t_max *max, int x[3], int y[3], unsigned int c[2])
 //         else
 //             D = D + 2*dx
 //         end if
-// A complete solution would need to detect whether x1 > x0 or y1 > y0 and reverse the input coordinates before drawing, thus
 
 void	ft_plot_line_high(t_max *max, int x[3], int y[3], unsigned int c[2])
 {
@@ -297,9 +295,9 @@ void	ft_place_line(t_max *max, int i, int j)
 
 	m = max->map;
 	if (i != m->h - 1)
-		ft_plot_line_ver(max, i , j);
+		ft_plot_line_ver(max, i, j);
 	if (j != m->w - 1)
-		ft_plot_line_hor(max, i , j);
+		ft_plot_line_hor(max, i, j);
 }
 
 void	ft_black(t_max *max)
@@ -316,7 +314,7 @@ void	ft_black(t_max *max)
 			mlx_put_pixel(max->img, x, y, 0xFF);
 			x++;
 		}
-	y++;
+		y++;
 	}
 }
 
@@ -344,7 +342,7 @@ void	ft_update_map(t_map *map)
 		{
 			map->mr[y][x].x = (map->mo[y][x].x) + (map->z * (x - map->w / 2));
 			map->mr[y][x].y = (map->mo[y][x].y) + (map->z * (y - map->h / 2));
-			map->mr[y][x].z = map->mo[y][x].z * 16.0 / map->q;
+			map->mr[y][x].z = map->mo[y][x].z * 64.0 / map->q;
 			ft_rotate_map(map->ax, &map->mr[y][x].y, &map->mr[y][x].z);
 			ft_rotate_map(map->ay, &map->mr[y][x].x, &map->mr[y][x].z);
 			ft_rotate_map(map->az, &map->mr[y][x].x, &map->mr[y][x].y);
@@ -394,9 +392,11 @@ void	ft_colourize(void *param)
 		j = 0;
 		while (j < m->w)
 		{
-			ft_place_line(max, i , j);
-			if (m->ms[i][j].x > 0 && m->ms[i][j].x < 1600 && m->ms[i][j].y > 0 && m->ms[i][j].y < 900)
-				mlx_put_pixel(max->img, m->ms[i][j].x, m->ms[i][j].y, m->ms[i][j].c);
+			ft_place_line(max, i, j);
+			if (m->ms[i][j].x > 0 && m->ms[i][j].x < 1600
+				&& m->ms[i][j].y > 0 && m->ms[i][j].y < 900)
+				mlx_put_pixel(max->img, m->ms[i][j].x,
+					m->ms[i][j].y, m->ms[i][j].c);
 			j++;
 		}
 		i++;
@@ -419,7 +419,7 @@ int	ft_get_color(char *str)
 	while (str && str[i] && str[i] != ',')
 		i++;
 	if (str[i] == ',' && str[i + 1] == '0' && str[i + 2] == 'X')
-		return(ft_atoi_base("0123456789ABCDEF", &str[i + 3]) << 8 | 0xFF);
+		return (ft_atoi_base("0123456789ABCDEF", &str[i + 3]) << 8 | 0xFF);
 	return (0);
 }
 
@@ -437,7 +437,7 @@ void	ft_fill_row(t_map *map, char **row, int i)
 	if (map->w != j)
 		exit(-1);//wrong map need to free stuff
 	j = 0;
-	map->mo[i] = malloc((map->w) * sizeof(t_point));;
+	map->mo[i] = malloc((map->w) * sizeof(t_point));
 	while (row[j])
 	{
 		map->mo[i][j].y = i;
@@ -470,7 +470,7 @@ void	ft_init_row(t_map *map, int i)
 	int			j;
 
 	j = 0;
-	map->mr[i] = malloc((map->w) * sizeof(t_point));;
+	map->mr[i] = malloc((map->w) * sizeof(t_point));
 	while (j < map->w)
 	{
 		map->mr[i][j].y = (map->mo[i][j].y) + (map->z * (i - map->h / 2));
@@ -503,8 +503,10 @@ void	ft_screen_row(t_map *map, int i)
 	map->ms[i] = malloc((map->w) * sizeof(t_coord));
 	while (j < map->w)
 	{
-		map->ms[i][j].x = map->xs + (map->mr[i][j].x - map->mr[i][j].y) * cos(M_PI / 6.0);
-		map->ms[i][j].y = map->ys + ((map->mr[i][j].x + map->mr[i][j].y) / 2.0) - map->mr[i][j].z;
+		map->ms[i][j].x = map->xs
+			+ (map->mr[i][j].x - map->mr[i][j].y) * cos(M_PI / 6.0);
+		map->ms[i][j].y = map->ys
+			+ ((map->mr[i][j].x + map->mr[i][j].y) / 2.0) - map->mr[i][j].z;
 		if (map->mr[i][j].c)
 			map->ms[i][j].c = map->mr[i][j].c;
 		else
@@ -531,15 +533,18 @@ void	ft_fill_screen(t_map *map)
 void	ft_show_coord(t_map *map)
 {
 	int	i;
-	int j;
+	int	j;
 
 	i = 0;
 	while (map->mo[i])
 	{
 		j = 0;
 		while (j < map->w)
-		{map->ax = 0;
-			//printf("x = %f, y = %f, z = %f, c = %x\n", map->mo[i][j].x, map->mo[i][j].y, map->mo[i][j].z, map->mo[i][j].c);
+		{
+			map->ax = 0;
+			//printf("x = %f, y = %f, z = %f, c = %x\n",
+			//	map->mo[i][j].x, map->mo[i][j].y,
+			//	map->mo[i][j].z, map->mo[i][j].c);
 			j++;
 		}
 		i++;
@@ -550,7 +555,7 @@ void	ft_show_coord(t_map *map)
 void	ft_show_coord2(t_map *map)
 {
 	int	i;
-	int j;
+	int	j;
 
 	i = 0;
 	while (map->mr[i])
@@ -558,7 +563,9 @@ void	ft_show_coord2(t_map *map)
 		j = 0;
 		while (j < map->w)
 		{
-			printf("x = %f, y = %f, z = %f, c = %x\n", map->mr[i][j].x, map->mr[i][j].y, map->mr[i][j].z, map->mr[i][j].c);
+			//printf("x = %f, y = %f, z = %f, c = %x\n",
+			//	map->mr[i][j].x, map->mr[i][j].y,
+			//	map->mr[i][j].z, map->mr[i][j].c);
 			j++;
 		}
 		i++;
@@ -568,7 +575,7 @@ void	ft_show_coord2(t_map *map)
 void	ft_show_coord3(t_map *map)
 {
 	int	i;
-	int j;
+	int	j;
 
 	i = 0;
 	while (map->ms[i])
@@ -576,7 +583,9 @@ void	ft_show_coord3(t_map *map)
 		j = 0;
 		while (j < map->w)
 		{
-			//ft_printf("x = %d, y = %d, c = %x\n", map->ms[i][j].x, map->ms[i][j].y, map->ms[i][j].c);
+			//ft_printf("x = %d, y = %d, c = %x\n",
+			//	map->ms[i][j].x, map->ms[i][j].y,
+			//	map->ms[i][j].c);
 			j++;
 		}
 		i++;
@@ -617,7 +626,7 @@ void	ft_init_map(t_map *map)
 	map->x = 0;
 	map->y = 0;
 	map->z = 4;
-	map->q = 16;
+	map->q = 64;
 	map->xs = 200;
 	map->ys = 200;
 	map->ax = 0;
@@ -640,7 +649,7 @@ void	ft_free_double(void **ptr)
 	ptr = NULL;
 }
 
-void	ft_free(t_map* map)
+void	ft_free(t_map *map)
 {
 	ft_free_split(map->m);
 	ft_free_double((void **)map->mo);
@@ -650,9 +659,9 @@ void	ft_free(t_map* map)
 
 void	ft_fdf(t_max *max, char *mapfile)
 {
-	mlx_t				*mlx;
-	t_map				mapt;
-	mlx_image_t 		*image;
+	mlx_t		*mlx;
+	t_map		mapt;
+	mlx_image_t	*image;
 
 	max->map = &mapt;
 	ft_init_map(max->map);

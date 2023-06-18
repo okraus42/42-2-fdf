@@ -6,7 +6,7 @@
 #    By: okraus <okraus@student.42prague.com>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/03/04 15:40:17 by okraus            #+#    #+#              #
-#    Updated: 2023/06/18 10:19:26 by okraus           ###   ########.fr        #
+#    Updated: 2023/06/18 13:05:35 by okraus           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -88,7 +88,7 @@ all:			announce libmlx $(LIBFT) $(NAME)
 				@$(PRINT2)
 				@$(PRINT1)
 				@$(ECHO)
-				@echo "$(GREEN)Amazing <<$(REVERSE)fractol$(NRM_FORMAT)$(GREEN)>> compiled!$(NRM_FORMAT)"
+				@echo "$(GREEN)Amazing <<$(REVERSE)fdf$(NRM_FORMAT)$(GREEN)>> compiled!$(NRM_FORMAT)"
 				
 
 bonus:			all
@@ -110,7 +110,7 @@ libmlx:
 $(OBJ_DIR)%.o:	$(SRC_DIR)%.c
 				@mkdir -p $(OBJ_DIR)
 				@$(SLEEP)
-				@echo "$(RETURN)$(RETURN)$(YELLOW)Compiling FRACTOL: $< $(NRM_FORMAT)"
+				@echo "$(RETURN)$(RETURN)$(YELLOW)Compiling FDF: $< $(NRM_FORMAT)"
 				@$(PRINT2)
 				@$(PRINT1)
 				@$(CC) $(CFLAGS) -c $< -o $@
@@ -122,13 +122,13 @@ $(NAME): 		$(OBJ)
 				@$(PRINT2)
 				@$(PRINT1)
 				@$(ECHO)
-				@echo "$(RETURN)$(RETURN)$(GREEN)Fractol compiled!$(NRM_FORMAT)"
+				@echo "$(RETURN)$(RETURN)$(GREEN)FDF compiled!$(NRM_FORMAT)"
 
 $(LIBFT):
 				@echo "$(RETURN)$(RETURN)$(YELLOW)Compiling LIBFT: $< $(NRM_FORMAT)"
 				@make -s -C $(LIBFT_F)
 				@cp libft/libft.a .
-				@echo "$(YELLOW)Compiling FRACTOL: $< $(NRM_FORMAT)"
+				@echo "$(YELLOW)Compiling FDF: $< $(NRM_FORMAT)"
 				@$(PRINT2)
 				@$(PRINT1)
 				@$(ECHO)

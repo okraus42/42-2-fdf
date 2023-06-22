@@ -6,7 +6,7 @@
 /*   By: okraus <okraus@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/16 15:35:23 by okraus            #+#    #+#             */
-/*   Updated: 2023/06/22 15:57:01 by okraus           ###   ########.fr       */
+/*   Updated: 2023/06/22 17:03:15 by okraus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -561,16 +561,16 @@ unsigned int	ft_colour(t_map *map, int i, int j, int d[2])
 		d[1] = ft_abs(map->min - 0);
 		return (ft_colour_2(d, 0x000066FF, 0xCCFFFFFF));
 	}
-	else if (map->mo[i][j].z <= (3 * map->max / 4))
+	else if (map->mo[i][j].z <= (1 * map->max / 2))
 	{
 		d[0] = ft_abs(map->mo[i][j].z);
-		d[1] = ft_abs(3 * map->max / 4);
+		d[1] = ft_abs(1 * map->max / 2);
 		return (ft_colour_2(d, 0x00FF00FF, 0xFFFFCCFF));
 	}
 	else if (map->mo[i][j].z <= (7 * map->max / 8))
 	{
-		d[0] = ft_abs(map->mo[i][j].z - 3 * map->max / 4);
-		d[1] = ft_abs(3 * map->max / 4 - 7 * map->max / 8);
+		d[0] = ft_abs(map->mo[i][j].z - 1 * map->max / 2);
+		d[1] = ft_abs(1 * map->max / 2 - 7 * map->max / 8);
 		return (ft_colour_2(d, 0xFFFFCCFF, 0x663300FF));
 	}
 	else
@@ -826,12 +826,20 @@ void	ft_fdf(t_max *max, char *mapfile)
 
 int32_t	main(int32_t argc, char *argv[])
 {
-	t_max				max;
+	t_max	max;
+	int		n;
 
 	if (argc != 2)
 	{
 		ft_printf_fd(2, "%91CError%0C\n%61CWrong numbr of arguments%0C\n");
 		return (1);
+	}
+	n = ft_strlen(argv[1]);
+	if (n < 5 || argv[1][n - 1] != 'f' || argv[1][n - 2] != 'd'
+		|| argv[1][n - 3] != 'f' || argv[1][n - 4] != '.')
+	{
+		ft_printf_fd(2, "%91CError%0C\n%61CThis is not a valid map file%0C\n");
+		return (2);
 	}
 	ft_fdf(&max, argv[1]);
 	return (EXIT_SUCCESS);

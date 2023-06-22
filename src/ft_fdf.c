@@ -6,7 +6,7 @@
 /*   By: okraus <okraus@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/16 15:35:23 by okraus            #+#    #+#             */
-/*   Updated: 2023/06/18 16:35:09 by okraus           ###   ########.fr       */
+/*   Updated: 2023/06/22 15:57:01 by okraus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,12 @@ void	ft_hook2(t_max	*max)
 		max->map->ay -= 0.03125;
 	if (mlx_is_key_down(max->mlx, MLX_KEY_E))
 		max->map->ay += 0.03125;
+	if (mlx_is_key_down(max->mlx, MLX_KEY_P))
+	{
+		max->map->p++;
+		if (max->map->p >= 20)
+			max->map->p = 0;
+	}
 }
 
 void	ft_hook(void *param)
@@ -76,29 +82,15 @@ void	ft_hook(void *param)
 //             D = D + 2*dy
 //         end if
 
-unsigned int	ft_mix_colour(int x[3], int y[3], unsigned int c[2])
+unsigned int	ft_mix_colour2(unsigned int d[2], unsigned int rgb[4],
+	unsigned int c[2])
 {
-	unsigned int	d[2];
-	unsigned int	rgb[4];
 	unsigned int	r[4];
 
-	d[0] = ft_abs(x[2] - x[0]) + ft_abs(y[2] - y[0]);
-	d[1] = ft_abs(x[1] - x[0]) + ft_abs(y[1] - y[0]);
-	if (!d[1])
-		d[1] = 1;
-	rgb[0] = (ft_uabsdif(c[0] & 0xFF000000, c[1] & 0xFF000000)) >> 24;
-	rgb[1] = (ft_uabsdif(c[0] & 0xFF0000, c[1] & 0xFF0000)) >> 16;
-	rgb[2] = (ft_uabsdif(c[0] & 0xFF00, c[1] & 0xFF00)) >> 8;
-	rgb[3] = ft_uabsdif(c[0] & 0xFF, c[1] & 0xFF);
 	if ((c[0] & 0xFF000000) < (c[1] & 0xFF000000))
 		r[0] = ((rgb[0] * d[0]) / d[1] + ((c[0] & 0xFF000000) >> 24)) << 24;
 	else
-	{
 		r[0] = (((c[0] & 0xFF000000) >> 24) - ((rgb[0] * d[0]) / d[1])) << 24;
-		// ft_printf("r[0] = %x\n", r[0]);
-		// ft_printf("((c[1] & 0xFF000000) >> 24) = %x\n", ((c[1] & 0xFF000000) >> 24));
-		// ft_printf("((rgb[0] * d[0]) / d[1]) = %x\n", ((rgb[0] * d[0]) / d[1]));
-	}
 	if ((c[0] & 0xFF0000) < (c[1] & 0xFF0000))
 		r[1] = (rgb[1] * d[0] / d[1] + ((c[0] & 0xFF0000) >> 16)) << 16;
 	else
@@ -111,83 +103,51 @@ unsigned int	ft_mix_colour(int x[3], int y[3], unsigned int c[2])
 		r[3] = rgb[3] * d[0] / d[1] + (c[0] & 0xFF);
 	else
 		r[3] = (c[0] & 0xFF) - rgb[3] * d[0] / d[1];
-	// ft_printf("help C = %x, c[0] = %x, c[1] = %x, d[0] = %i, d[1] = %i\n", r[0] | r[1] | r[2] | r[3], c[0], c[1], d[0], d[1]);
-	// ft_printf("rgb[0] = %x, rgb[1] = %x, rgb[2] = %x, rgb[3] = %x\n", rgb[0], rgb[1], rgb[2], rgb[3]);
-	// ft_printf("r[0] = %x, r[1] = %x, r[2] = %x, r[3] = %x\n", r[0], r[1], r[2], r[3]);
 	return (r[0] | r[1] | r[2] | r[3]);
 }
 
-// unsigned int	ft_mix_colour(int x[3], int y[3], unsigned int c[2])
-// {
-// 	unsigned int	d[2];
-// 	unsigned int	rgb[4];
-// 	unsigned int	r[4];
-
-// 	d[0] = ft_abs(x[2] - x[0]) + ft_abs(y[2] - y[0]);
-// 	d[1] = ft_abs(x[1] - x[0]) + ft_abs(y[1] - y[0]);
-// 	if (!d[1])
-// 		d[1] = 1;
-// 	rgb[0] = (ft_uabsdif(c[0] & 0xFF000000, c[1] & 0xFF000000)) >> 24;
-// 	rgb[1] = (ft_uabsdif(c[0] & 0xFF0000, c[1] & 0xFF0000)) >> 16;
-// 	rgb[2] = (ft_uabsdif(c[0] & 0xFF00, c[1] & 0xFF00)) >> 8;
-// 	rgb[3] = ft_uabsdif(c[0] & 0xFF, c[1] & 0xFF);
-// 	if ((c[0] & 0xFF000000) > (c[1] & 0xFF000000))
-// 		r[0] = ((rgb[0] * d[0]) / d[1] + ((c[0] & 0xFF000000) >> 24)) << 24;
-// 	else
-// 	{
-// 		r[0] = (((c[1] & 0xFF000000) >> 24) - ((rgb[0] * d[0]) / d[1])) << 24;
-// 		// ft_printf("r[0] = %x\n", r[0]);
-// 		// ft_printf("((c[1] & 0xFF000000) >> 24) = %x\n", ((c[1] & 0xFF000000) >> 24));
-// 		// ft_printf("((rgb[0] * d[0]) / d[1]) = %x\n", ((rgb[0] * d[0]) / d[1]));
-// 	}
-// 	if ((c[0] & 0xFF0000) > (c[1] & 0xFF0000))
-// 		r[1] = (rgb[1] * d[0] / d[1] + ((c[0] & 0xFF0000) >> 16)) << 16;
-// 	else
-// 		r[1] = (((c[0] & 0xFF0000) >> 16) - (rgb[1] * d[0] / d[1])) << 16;
-// 	if ((c[0] & 0xFF00) > (c[1] & 0xFF00))
-// 		r[2] = (rgb[2] * d[0] / d[1] + ((c[0] & 0xFF00) >> 8)) << 8;
-// 	else
-// 		r[2] = (((c[0] & 0xFF00) >> 8) - (rgb[2] * d[0] / d[1])) << 8;
-// 	if ((c[0] & 0xFF) > (c[1] & 0xFF))
-// 		r[3] = rgb[3] * d[0] / d[1] + (c[0] & 0xFF);
-// 	else
-// 		r[3] = (c[0] & 0xFF) - rgb[3] * d[0] / d[1];
-// 	// ft_printf("help C = %x, c[0] = %x, c[1] = %x, d[0] = %i, d[1] = %i\n", r[0] | r[1] | r[2] | r[3], c[0], c[1], d[0], d[1]);
-// 	// ft_printf("rgb[0] = %x, rgb[1] = %x, rgb[2] = %x, rgb[3] = %x\n", rgb[0], rgb[1], rgb[2], rgb[3]);
-// 	// ft_printf("r[0] = %x, r[1] = %x, r[2] = %x, r[3] = %x\n", r[0], r[1], r[2], r[3]);
-// 	return (r[0] | r[1] | r[2] | r[3]);
-// }
-
-void	ft_plot_line_low(t_max *max, int x[3], int y[3], unsigned int c[2])
+unsigned int	ft_mix_colour(int x[3], int y[3], unsigned int c[2])
 {
-	int	dx;
-	int	dy;
-	int	yi;
-	int	d;
+	unsigned int	d[2];
+	unsigned int	rgb[4];
 
-	dx = x[1] - x[0];
-	dy = y[1] - y[0];
-	yi = 1;
-	if (dy < 0)
+	d[0] = ft_abs(x[2] - x[0]) + ft_abs(y[2] - y[0]);
+	d[1] = ft_abs(x[1] - x[0]) + ft_abs(y[1] - y[0]);
+	if (!d[1])
+		d[1] = 1;
+	rgb[0] = (ft_uabsdif(c[0] & 0xFF000000, c[1] & 0xFF000000)) >> 24;
+	rgb[1] = (ft_uabsdif(c[0] & 0xFF0000, c[1] & 0xFF0000)) >> 16;
+	rgb[2] = (ft_uabsdif(c[0] & 0xFF00, c[1] & 0xFF00)) >> 8;
+	rgb[3] = ft_uabsdif(c[0] & 0xFF, c[1] & 0xFF);
+	return (ft_mix_colour2(d, rgb, c));
+}
+
+void	ft_plot_line_low(t_max *max, t_line l)
+{
+	l.dx = l.x[1] - l.x[0];
+	l.dy = l.y[1] - l.y[0];
+	l.yi = 1;
+	if (l.dy < 0)
 	{
-		yi = -1;
-		dy *= -1;
+		l.yi = -1;
+		l.dy *= -1;
 	}
-	d = (2 * dy) - dx;
-	x[2] = x[0];
-	y[2] = y[0];
-	while (x[2] <= x[1])
+	l.d = (2 * l.dy) - l.dx;
+	l.x[2] = l.x[0];
+	l.y[2] = l.y[0];
+	while (l.x[2] <= l.x[1])
 	{
-		if (x[2] > 0 && x[2] < 1600 && y[2] > 0 && y[2] < 900)
-			mlx_put_pixel(max->img, x[2], y[2], ft_mix_colour(x, y, c));
-		if (d > 0)
+		if (l.x[2] > 0 && l.x[2] < 1600 && l.y[2] > 0 && l.y[2] < 900)
+			mlx_put_pixel(max->img, l.x[2], l.y[2],
+				ft_mix_colour(l.x, l.y, l.c));
+		if (l.d > 0)
 		{
-			y[2] = y[2] + yi;
-			d += 2 * (dy - dx);
+			l.y[2] = l.y[2] + l.yi;
+			l.d += 2 * (l.dy - l.dx);
 		}
 		else
-			d = d + 2 * dy;
-		x[2]++;
+			l.d = l.d + 2 * l.dy;
+		l.x[2]++;
 	}
 }
 
@@ -211,36 +171,32 @@ void	ft_plot_line_low(t_max *max, int x[3], int y[3], unsigned int c[2])
 //             D = D + 2*dx
 //         end if
 
-void	ft_plot_line_high(t_max *max, int x[3], int y[3], unsigned int c[2])
+void	ft_plot_line_high(t_max *max, t_line l)
 {
-	int	dx;
-	int	dy;
-	int	xi;
-	int	d;
-
-	dx = x[1] - x[0];
-	dy = y[1] - y[0];
-	xi = 1;
-	if (dx < 0)
+	l.dx = l.x[1] - l.x[0];
+	l.dy = l.y[1] - l.y[0];
+	l.xi = 1;
+	if (l.dx < 0)
 	{
-		xi = -1;
-		dx *= -1;
+		l.xi = -1;
+		l.dx *= -1;
 	}
-	d = (2 * dx) - dy;
-	x[2] = x[0];
-	y[2] = y[0];
-	while (y[2] <= y[1])
+	l.d = (2 * l.dx) - l.dy;
+	l.x[2] = l.x[0];
+	l.y[2] = l.y[0];
+	while (l.y[2] <= l.y[1])
 	{
-		if (x[2] > 0 && x[2] < 1600 && y[2] > 0 && y[2] < 900)
-			mlx_put_pixel(max->img, x[2], y[2], ft_mix_colour(x, y, c));
-		if (d > 0)
+		if (l.x[2] > 0 && l.x[2] < 1600 && l.y[2] > 0 && l.y[2] < 900)
+			mlx_put_pixel(max->img, l.x[2], l.y[2],
+				ft_mix_colour(l.x, l.y, l.c));
+		if (l.d > 0)
 		{
-			x[2] = x[2] + xi;
-			d = d + (2 * (dx - dy));
+			l.x[2] = l.x[2] + l.xi;
+			l.d = l.d + (2 * (l.dx - l.dy));
 		}
 		else
-			d = d + 2 * dx;
-		y[2]++;
+			l.d = l.d + 2 * l.dx;
+		l.y[2]++;
 	}
 }
 
@@ -268,83 +224,54 @@ void	ft_super_swap(int a[3], int b[3], unsigned int c[2])
 
 void	ft_plot_line_hor(t_max *max, int i, int j)
 {
-	t_map			*m;
-	int				x[3];
-	int				y[3];
-	unsigned int	c[2];
+	t_map	*m;
+	t_line	l;
 
 	m = max->map;
-	x[0] = m->ms[i][j].x;
-	y[0] = m->ms[i][j].y;
-	c[0] = m->ms[i][j].c;
-	x[1] = m->ms[i][j + 1].x;
-	y[1] = m->ms[i][j + 1].y;
-	c[1] = m->ms[i][j + 1].c;
-	if (ft_abs(y[1] - y[0]) < ft_abs(x[1] - x[0]))
+	l.x[0] = m->ms[i][j].x;
+	l.y[0] = m->ms[i][j].y;
+	l.c[0] = m->ms[i][j].c;
+	l.x[1] = m->ms[i][j + 1].x;
+	l.y[1] = m->ms[i][j + 1].y;
+	l.c[1] = m->ms[i][j + 1].c;
+	if (ft_abs(l.y[1] - l.y[0]) < ft_abs(l.x[1] - l.x[0]))
 	{
-		// ft_printf("hLo i=%i,j=%i+1,c[0]=%x, c[1]=%x\n", i, j, c[0], c[1]);
-		if (x[0] > x[1])
-		{
-			ft_swap(&x[0], &x[1]);
-			ft_swap(&y[0], &y[1]);
-			ft_uswap(&c[0], &c[1]);
-		}
-		ft_plot_line_low(max, x, y, c);
-		// ft_printf("hLs i=%i,j=%i+1,c[0]=%x, c[1]=%x\n", i, j, c[0], c[1]);
+		if (l.x[0] > l.x[1])
+			ft_super_swap(l.x, l.y, l.c);
+		ft_plot_line_low(max, l);
 	}
 	else
 	{
-		// ft_printf("hHo i=%i,j=%i+1,c[0]=%x, c[1]=%x\n", i, j, c[0], c[1]);
-		if (y[0] > y[1])
-		{
-			ft_swap(&x[0], &x[1]);
-			ft_swap(&y[0], &y[1]);
-			ft_uswap(&c[0], &c[1]);
-		}
-		ft_plot_line_high(max, x, y, c);
-		// ft_printf("hHo i=%i,j=%i+1,c[0]=%x, c[1]=%x\n", i, j, c[0], c[1]);
+		if (l.y[0] > l.y[1])
+			ft_super_swap(l.x, l.y, l.c);
+		ft_plot_line_high(max, l);
 	}
 }
 
 void	ft_plot_line_ver(t_max *max, int i, int j)
 {
-	t_map			*m;
-	int				x[3];
-	int				y[3];
-	unsigned int	c[2];
+	t_map	*m;
+	t_line	l;
 
 	m = max->map;
-	x[0] = m->ms[i][j].x;
-	y[0] = m->ms[i][j].y;
-	c[0] = m->ms[i][j].c;
-	x[1] = m->ms[i + 1][j].x;
-	y[1] = m->ms[i + 1][j].y;
-	c[1] = m->ms[i + 1][j].c;
-	if (ft_abs(y[1] - y[0]) < ft_abs(x[1] - x[0]))
+	l.x[0] = m->ms[i][j].x;
+	l.y[0] = m->ms[i][j].y;
+	l.c[0] = m->ms[i][j].c;
+	l.x[1] = m->ms[i + 1][j].x;
+	l.y[1] = m->ms[i + 1][j].y;
+	l.c[1] = m->ms[i + 1][j].c;
+	if (ft_abs(l.y[1] - l.y[0]) < ft_abs(l.x[1] - l.x[0]))
 	{
-		// ft_printf("vLo i=%i+1,j=%i,c[0]=%x, c[1]=%x\n", i, j, c[0], c[1]);
-		if (x[0] > x[1])
-		{
-			ft_swap(&x[0], &x[1]);
-			ft_swap(&y[0], &y[1]);
-			ft_uswap(&c[0], &c[1]);
-		}
-		ft_plot_line_low(max, x, y, c);
-		// ft_printf("vLs i=%i+1,j=%i,c[0]=%x, c[1]=%x\n", i, j, c[0], c[1]);
+		if (l.x[0] > l.x[1])
+			ft_super_swap(l.x, l.y, l.c);
+		ft_plot_line_low(max, l);
 	}
 	else
 	{
-		// ft_printf("vHo i=%i+1,j=%i,c[0]=%x, c[1]=%x\n", i, j, c[0], c[1]);
-		if (y[0] > y[1])
-		{
-			ft_swap(&x[0], &x[1]);
-			ft_swap(&y[0], &y[1]);
-			ft_uswap(&c[0], &c[1]);
-		}
-		ft_plot_line_high(max, x, y, c);
-		// ft_printf("vHs i=%i+1,j=%i,c[0]=%x, c[1]=%x\n", i, j, c[0], c[1]);
-	}
-	
+		if (l.y[0] > l.y[1])
+			ft_super_swap(l.x, l.y, l.c);
+		ft_plot_line_high(max, l);
+	}	
 }
 
 void	ft_place_line(t_max *max, int i, int j)
@@ -410,7 +337,7 @@ void	ft_update_map(t_map *map)
 	}
 }
 
-void	ft_update_screen(t_map *map)
+void	ft_update_screen_isometric(t_map *map)
 {
 	int	y;
 	int	x;
@@ -431,6 +358,36 @@ void	ft_update_screen(t_map *map)
 		}
 		y++;
 	}
+}
+
+void	ft_update_screen_cabinet(t_map *map)
+{
+	int	y;
+	int	x;
+
+	y = 0;
+	ft_update_map(map);
+	while (y < map->h)
+	{
+		x = 0;
+		while (x < map->w)
+		{
+			map->ms[y][x].x = map->xs
+				+ (map->mr[y][x].x + map->mr[y][x].z / 4);
+			map->ms[y][x].y = map->ys
+				+ (map->mr[y][x].y + map->mr[y][x].z * sin(M_PI / 3.0) / 2.0);
+			x++;
+		}
+		y++;
+	}
+}
+
+void	ft_update_screen(t_map *map)
+{
+	if (map->p < 10)
+		ft_update_screen_isometric(map);
+	else if (map->p < 21)
+		ft_update_screen_cabinet(map);
 }
 
 void	ft_colourize(void *param)
@@ -455,18 +412,6 @@ void	ft_colourize(void *param)
 				&& m->ms[i][j].y > 0 && m->ms[i][j].y < 900)
 				mlx_put_pixel(max->img, m->ms[i][j].x,
 					m->ms[i][j].y, m->ms[i][j].c);
-			// if ((i == 4 || i == 5 || i == 32) && (j == 7 || j == 10))
-			// {	
-			// 	mlx_put_pixel(max->img, m->ms[i][j].x, m->ms[i][j].y, 0xFF0000FF);
-			// 	mlx_put_pixel(max->img, m->ms[i][j].x + 1, m->ms[i][j].y, 0xFF0000FF);
-			// 	mlx_put_pixel(max->img, m->ms[i][j].x, m->ms[i][j].y + 1, 0xFF0000FF);
-			// 	mlx_put_pixel(max->img, m->ms[i][j].x + 1, m->ms[i][j].y + 1, 0xFF0000FF);
-			// 	mlx_put_pixel(max->img, m->ms[i][j].x + 2, m->ms[i][j].y, 0xFF0000FF);
-			// 	mlx_put_pixel(max->img, m->ms[i][j].x + 2, m->ms[i][j].y + 1, 0xFF0000FF);
-			// 	mlx_put_pixel(max->img, m->ms[i][j].x + 2, m->ms[i][j].y + 2, 0xFF0000FF);
-			// 	mlx_put_pixel(max->img, m->ms[i][j].x, m->ms[i][j].y + 2, 0xFF0000FF);
-			// 	mlx_put_pixel(max->img, m->ms[i][j].x + 1, m->ms[i][j].y + 2, 0xFF0000FF);
-			// }
 			j++;
 		}
 		i++;
@@ -571,73 +516,75 @@ void	ft_init_coord(t_map *map)
 	map->mr[map->h] = NULL;
 }
 
-unsigned int	ft_colour_2(int d0, int d1, unsigned int c0, unsigned int c1)
+unsigned int	ft_colour_3(int d[2], unsigned int c0, unsigned int c1,
+	unsigned int rgb[4])
 {
-	unsigned int	rgb[4];
 	unsigned int	r[4];
 
-	if (!d1)
-		d1 = 1;
+	if ((c0 & 0xFF000000) < (c1 & 0xFF000000))
+		r[0] = ((rgb[0] * d[0]) / d[1] + ((c0 & 0xFF000000) >> 24)) << 24;
+	else
+		r[0] = (((c1 & 0xFF000000) >> 24) - ((rgb[0] * d[0]) / d[1])) << 24;
+	if ((c0 & 0xFF0000) < (c1 & 0xFF0000))
+		r[1] = (rgb[1] * d[0] / d[1] + ((c0 & 0xFF0000) >> 16)) << 16;
+	else
+		r[1] = (((c0 & 0xFF0000) >> 16) - (rgb[1] * d[0] / d[1])) << 16;
+	if ((c0 & 0xFF00) < (c1 & 0xFF00))
+		r[2] = (rgb[2] * d[0] / d[1] + ((c0 & 0xFF00) >> 8)) << 8;
+	else
+		r[2] = (((c0 & 0xFF00) >> 8) - (rgb[2] * d[0] / d[1])) << 8;
+	if ((c0 & 0xFF) < (c1 & 0xFF))
+		r[3] = rgb[3] * d[0] / d[1] + (c0 & 0xFF);
+	else
+		r[3] = (c0 & 0xFF) - rgb[3] * d[0] / d[1];
+	return (r[0] | r[1] | r[2] | r[3]);
+}
+
+unsigned int	ft_colour_2(int d[2], unsigned int c0, unsigned int c1)
+{
+	unsigned int	rgb[4];
+
+	if (!d[1])
+		d[1] = 1;
 	rgb[0] = (ft_uabsdif(c0 & 0xFF000000, c1 & 0xFF000000)) >> 24;
 	rgb[1] = (ft_uabsdif(c0 & 0xFF0000, c1 & 0xFF0000)) >> 16;
 	rgb[2] = (ft_uabsdif(c0 & 0xFF00, c1 & 0xFF00)) >> 8;
 	rgb[3] = ft_uabsdif(c0 & 0xFF, c1 & 0xFF);
-	if ((c0 & 0xFF000000) < (c1 & 0xFF000000))
-		r[0] = ((rgb[0] * d0) / d1 + ((c0 & 0xFF000000) >> 24)) << 24;
-	else
-		r[0] = (((c1 & 0xFF000000) >> 24) - ((rgb[0] * d0) / d1)) << 24;
-	if ((c0 & 0xFF0000) < (c1 & 0xFF0000))
-		r[1] = (rgb[1] * d0 / d1 + ((c0 & 0xFF0000) >> 16)) << 16;
-	else
-		r[1] = (((c0 & 0xFF0000) >> 16) - (rgb[1] * d0 / d1)) << 16;
-	if ((c0 & 0xFF00) < (c1 & 0xFF00))
-		r[2] = (rgb[2] * d0 / d1 + ((c0 & 0xFF00) >> 8)) << 8;
-	else
-		r[2] = (((c0 & 0xFF00) >> 8) - (rgb[2] * d0 / d1)) << 8;
-	if ((c0 & 0xFF) < (c1 & 0xFF))
-		r[3] = rgb[3] * d0 / d1 + (c0 & 0xFF);
-	else
-		r[3] = (c0 & 0xFF) - rgb[3] * d0 / d1;
-	ft_printf("d0 = %d, d1 = %d, C = %X, c0 = %X, c1 = %X\n", d0, d1, r[0] | r[1] | r[2] | r[3], c0, c1);
-	return (r[0] | r[1] | r[2] | r[3]);
+	return (ft_colour_3(d, c0, c1, rgb));
 }
 
-unsigned int	ft_colour(t_map *map, int i, int j)
+unsigned int	ft_colour(t_map *map, int i, int j, int d[2])
 {
-	int	d0;
-	int	d1;
-
-	ft_printf("\n%9CCOLOUR???%0C\n");
 	if (map->mo[i][j].z < 0)
 	{
-		d0 = ft_abs(map->mo[i][j].z - map->min);
-		d1 = ft_abs(map->min - 0);
-		return (ft_colour_2(d0, d1, 0x000066FF, 0xCCFFFFFF));
+		d[0] = ft_abs(map->mo[i][j].z - map->min);
+		d[1] = ft_abs(map->min - 0);
+		return (ft_colour_2(d, 0x000066FF, 0xCCFFFFFF));
 	}
 	else if (map->mo[i][j].z <= (3 * map->max / 4))
 	{
-		d0 = ft_abs(map->mo[i][j].z);
-		d1 = ft_abs(3 * map->max / 4);
-		ft_printf("\nd0 = %d, d1 = %d, max = %d\n", d0, d1, map->max);
-		return (ft_colour_2(d0, d1, 0x00FF00FF, 0xFFFFCCFF));
+		d[0] = ft_abs(map->mo[i][j].z);
+		d[1] = ft_abs(3 * map->max / 4);
+		return (ft_colour_2(d, 0x00FF00FF, 0xFFFFCCFF));
 	}
 	else if (map->mo[i][j].z <= (7 * map->max / 8))
 	{
-		d0 = ft_abs(map->mo[i][j].z - 3 * map->max / 4);
-		d1 = ft_abs(3 * map->max / 4 - 7 * map->max / 8);
-		return (ft_colour_2(d0, d1, 0xFFFFCCFF, 0x663300FF));
+		d[0] = ft_abs(map->mo[i][j].z - 3 * map->max / 4);
+		d[1] = ft_abs(3 * map->max / 4 - 7 * map->max / 8);
+		return (ft_colour_2(d, 0xFFFFCCFF, 0x663300FF));
 	}
 	else
 	{
-		d0 = ft_abs(map->mo[i][j].z - 7 * map->max / 8);
-		d1 = ft_abs(7 * map->max / 8 - map->max);
-		return (ft_colour_2(d0, d1, 0x663300FF, 0xFFFFFFFF));
+		d[0] = ft_abs(map->mo[i][j].z - 7 * map->max / 8);
+		d[1] = ft_abs(7 * map->max / 8 - map->max);
+		return (ft_colour_2(d, 0x663300FF, 0xFFFFFFFF));
 	}
 }
 
 void	ft_screen_row(t_map *map, int i)
 {
-	int			j;
+	int	j;
+	int	d[2];
 
 	j = 0;
 	map->ms[i] = malloc((map->w) * sizeof(t_coord));
@@ -650,7 +597,7 @@ void	ft_screen_row(t_map *map, int i)
 		if (map->mr[i][j].c)
 			map->ms[i][j].c = map->mr[i][j].c;
 		else
-			map->ms[i][j].c = ft_colour(map, i, j);
+			map->ms[i][j].c = ft_colour(map, i, j, d);
 		j++;
 	}
 }
@@ -669,7 +616,40 @@ void	ft_fill_screen(t_map *map)
 	map->ms[map->h] = NULL;
 }
 
+/*
+void	ft_screen_row_cabinet(t_map *map, int i)
+{
+	int			j;
+
+	j = 0;
+	while (j < map->w)
+	{
+		map->ms[i][j].x = map->xs
+			+ (map->mr[i][j].x + map->mr[i][j].z / 4);
+		map->ms[i][j].y = map->ys
+			+ (map->mr[i][j].y + map->mr[i][j].z * sin(M_PI / 3.0) / 2.0);
+		if (map->mr[i][j].c)
+			map->ms[i][j].c = map->mr[i][j].c;
+		else
+			map->ms[i][j].c = ft_colour(map, i, j);
+		j++;
+	}
+}
+
+void	ft_fill_screen_cabinet(t_map *map)
+{
+	int		i;
+
+	i = 0;
+	while (i < map->h)
+	{
+		ft_screen_row_cabinet(map, i);
+		i++;
+	}
+}*/
+
 //beware of printf
+/*
 void	ft_show_coord(t_map *map)
 {
 	int	i;
@@ -731,6 +711,7 @@ void	ft_show_coord3(t_map *map)
 		i++;
 	}
 }
+*/
 
 void	ft_fill_map(t_map *map, char *mapfile)
 {
@@ -763,6 +744,7 @@ void	ft_init_map(t_map *map)
 	map->w = 0;
 	map->h = 0;
 	map->d = 0;
+	map->p = 0;
 	map->x = 0;
 	map->y = 0;
 	map->z = 4;
@@ -797,6 +779,27 @@ void	ft_free(t_map *map)
 	ft_free_double((void **)map->ms);
 }
 
+void	ft_fdf2(t_max *max)
+{
+	if (!(max->img))
+	{
+		mlx_close_window(max->mlx);
+		puts(mlx_strerror(mlx_errno));
+		exit(EXIT_FAILURE);
+	}
+	if (mlx_image_to_window(max->mlx, max->img, 0, 0) == -1)
+	{
+		mlx_close_window(max->mlx);
+		puts(mlx_strerror(mlx_errno));
+		exit(EXIT_FAILURE);
+	}
+	mlx_loop_hook(max->mlx, ft_hook, max);
+	mlx_loop_hook(max->mlx, ft_colourize, max);
+	mlx_loop(max->mlx);
+	ft_free(max->map);
+	mlx_terminate(max->mlx);
+}
+
 void	ft_fdf(t_max *max, char *mapfile)
 {
 	mlx_t		*mlx;
@@ -806,15 +809,9 @@ void	ft_fdf(t_max *max, char *mapfile)
 	max->map = &mapt;
 	ft_init_map(max->map);
 	ft_fill_map(max->map, mapfile);
-	//ft_test_map(max->map);
 	ft_fill_coord(max->map);
-	ft_show_coord(max->map);
 	ft_init_coord(max->map);
-	ft_show_coord2(max->map);
 	ft_fill_screen(max->map);
-	ft_show_coord3(max->map);
-	//ft_print_map(max->map);
-	ft_put_strarray(max->map->m);
 	mlx = mlx_init(1600, 900, "FDF", true);
 	if (!mlx)
 	{
@@ -824,23 +821,7 @@ void	ft_fdf(t_max *max, char *mapfile)
 	max->mlx = mlx;
 	image = mlx_new_image(mlx, 1600, 900);
 	max->img = image;
-	if (!(max->img))
-	{
-		mlx_close_window(mlx);
-		puts(mlx_strerror(mlx_errno));
-		exit(EXIT_FAILURE);
-	}
-	if (mlx_image_to_window(mlx, max->img, 0, 0) == -1)
-	{
-		mlx_close_window(mlx);
-		puts(mlx_strerror(mlx_errno));
-		exit(EXIT_FAILURE);
-	}
-	mlx_loop_hook(max->mlx, ft_hook, max);
-	mlx_loop_hook(max->mlx, ft_colourize, max);
-	mlx_loop(max->mlx);
-	ft_free(&mapt);
-	mlx_terminate(max->mlx);
+	ft_fdf2(max);
 }
 
 int32_t	main(int32_t argc, char *argv[])

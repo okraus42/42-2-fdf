@@ -6,7 +6,7 @@
 /*   By: okraus <okraus@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/04 15:43:08 by okraus            #+#    #+#             */
-/*   Updated: 2023/06/10 16:26:37 by okraus           ###   ########.fr       */
+/*   Updated: 2023/06/22 15:33:23 by okraus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,21 @@ typedef struct s_coord
 	unsigned int	c;
 }	t_coord;
 
+typedef struct s_line
+{
+	int				x[3];
+	int				y[3];
+	unsigned int	c[2];
+	int				dx;
+	int				dy;
+	union
+	{
+		int			xi;
+		int			yi;
+	};
+	int				d;
+}	t_line;
+
 typedef struct s_map
 {
 	char	**m;	//
@@ -100,6 +115,7 @@ typedef struct s_map
 	int		min;	//min height on map
 	int		xs;		//x shift
 	int		ys;		//y shift
+	int		p;		//projection (0 isometric, 1 cabinet)
 	int		x;
 	int		y;
 	int		z;		//level of zoom

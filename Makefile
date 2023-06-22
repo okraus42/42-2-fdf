@@ -85,6 +85,7 @@ OBJ			=	$(addprefix $(OBJ_DIR), $(addsuffix .o, $(SRC_S)))
 # RULES
 
 all:			announce libmlx $(LIBFT) $(NAME)
+				@echo "$(RETURN)$(RETURN)$(GREEN)FDF compiled! $(NRM_FORMAT)"
 				@$(PRINT2)
 				@$(PRINT1)
 				@$(ECHO)
@@ -96,13 +97,15 @@ bonus:			all
 # MESSAGES 
 
 announce: 
-				@echo "$(RED)You should not see this (unless the program already exists)\n$(NRM_FORMAT)"
+				@echo "$(RED)Magic in progress...\n$(NRM_FORMAT)"
 
 #LIBMLX
 
 libmlx:
 				@cmake $(LIBMLX) $(CMFLAGS) -B $(LIBMLX)/build && make -C $(LIBMLX)/build -j4
 				@echo "$(GREEN)The <<$(REVERSE)MLX42$(NRM_FORMAT)$(GREEN)>> compiled!$(NRM_FORMAT)"
+				@$(PRINT2)
+				@$(PRINT1)
 				@$(ECHO)
 
 # COMPILATION
@@ -119,10 +122,10 @@ $(OBJ_DIR)%.o:	$(SRC_DIR)%.c
 $(NAME): 		$(OBJ)
 				@echo "$(RETURN)$(RETURN)$(GREEN)Libft compilation complete!$(NRM_FORMAT)"
 				@$(CC) $(CFLAGS) $(SRC) libft.a $(LIBS) $(LHEADERS) -o $(NAME)
+				@echo "$(RETURN)$(RETURN)$(GREEN)FDF compiled!$(NRM_FORMAT)"
 				@$(PRINT2)
 				@$(PRINT1)
 				@$(ECHO)
-				@echo "$(RETURN)$(RETURN)$(GREEN)FDF compiled!$(NRM_FORMAT)"
 
 $(LIBFT):
 				@echo "$(RETURN)$(RETURN)$(YELLOW)Compiling LIBFT: $< $(NRM_FORMAT)"

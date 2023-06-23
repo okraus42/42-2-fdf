@@ -6,7 +6,7 @@
 /*   By: okraus <okraus@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/16 15:35:23 by okraus            #+#    #+#             */
-/*   Updated: 2023/06/23 20:27:26 by okraus           ###   ########.fr       */
+/*   Updated: 2023/06/23 21:19:23 by okraus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -553,38 +553,40 @@ unsigned int	ft_colour_2(int d[2], unsigned int c0, unsigned int c1)
 	return (ft_colour_3(d, c0, c1, rgb));
 }
 
-unsigned int	ft_colour(t_map *map, int i, int j, int d[2])
+unsigned int	ft_colour_1(int a, int b, unsigned int c0, unsigned int c1)
+{
+	int	d[2];
+
+	d[0] = a;
+	d[1] = b;;
+	return (ft_colour_2(d, c0, c1));
+}
+
+unsigned int	ft_colour(t_map *map, int i, int j)
 {
 	if (map->mo[i][j].z < 0)
 	{
-		d[0] = ft_abs(map->min - map->mo[i][j].z);
-		d[1] = ft_abs(map->min);
-		return (ft_colour_2(d, 0x000066FF, 0xCCFFFFFF));
+		return (ft_colour_1(ft_abs(map->min - map->mo[i][j].z),
+			ft_abs(map->min), 0x000066FF, 0xCCFFFFFF));
 	}
+	else if (map->mo[i][j].z <= (1 * map->max / 8))
+		return (ft_colour_1(ft_abs(map->mo[i][j].z),
+			ft_abs(1 * map->max / 8), 0xCCFFFFFF, 0x006600FF));
 	else if (map->mo[i][j].z <= (1 * map->max / 2))
-	{
-		d[0] = ft_abs(map->mo[i][j].z);
-		d[1] = ft_abs(1 * map->max / 2);
-		return (ft_colour_2(d, 0x00FF00FF, 0xFFFFCCFF));
-	}
+		return (ft_colour_1(ft_abs(map->mo[i][j].z - 1 * map->max / 8),
+			ft_abs(1 * map->max / 8 - 1 * map->max / 2), 0x006600FF, 0xFFFFCCFF));
 	else if (map->mo[i][j].z <= (7 * map->max / 8))
-	{
-		d[0] = ft_abs(map->mo[i][j].z - 1 * map->max / 2);
-		d[1] = ft_abs(1 * map->max / 2 - 7 * map->max / 8);
-		return (ft_colour_2(d, 0xFFFFCCFF, 0x663300FF));
-	}
+		return (ft_colour_1(ft_abs(map->mo[i][j].z - 1 * map->max / 2),
+			ft_abs(1 * map->max / 2 - 7 * map->max / 8),
+			0xFFFFCCFF, 0x663300FF));
 	else
-	{
-		d[0] = ft_abs(map->mo[i][j].z - 7 * map->max / 8);
-		d[1] = ft_abs(map->max - 7 * map->max / 8);
-		return (ft_colour_2(d, 0x663300FF, 0xFFFFFFFF));
-	}
+		return (ft_colour_1(ft_abs(map->mo[i][j].z - 7 * map->max / 8),
+			ft_abs(map->max - 7 * map->max / 8), 0x663300FF, 0xFFFFFFFF));
 }
 
 void	ft_screen_row(t_map *map, int i)
 {
 	int	j;
-	int	d[2];
 
 	j = 0;
 	map->ms[i] = malloc((map->w) * sizeof(t_coord));
@@ -597,7 +599,7 @@ void	ft_screen_row(t_map *map, int i)
 		if (map->mr[i][j].c)
 			map->ms[i][j].c = map->mr[i][j].c;
 		else
-			map->ms[i][j].c = ft_colour(map, i, +j, d);
+			map->ms[i][j].c = ft_colour(map, i, j);
 		j++;
 	}
 }

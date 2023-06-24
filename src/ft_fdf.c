@@ -6,7 +6,7 @@
 /*   By: okraus <okraus@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/16 15:35:23 by okraus            #+#    #+#             */
-/*   Updated: 2023/06/23 21:19:23 by okraus           ###   ########.fr       */
+/*   Updated: 2023/06/24 15:35:43 by okraus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -438,6 +438,8 @@ int	ft_get_color(char *str)
 	return (0);
 }
 
+void	ft_free(t_map *map);
+
 void	ft_fill_row(t_map *map, char **row, int i)
 {
 	int			j;
@@ -450,7 +452,12 @@ void	ft_fill_row(t_map *map, char **row, int i)
 	if (!map->w)
 		map->w = j;
 	if (map->w != j)
-		exit(-1);//wrong map need to free stuff
+	{
+		ft_free(map);
+		ft_free_split(row);
+		ft_printf_fd(2, "%21CBadly formatted map%0C\n");
+		exit(-1);
+	}
 	j = 0;
 	map->mo[i] = malloc((map->w) * sizeof(t_point));
 	while (row[j])
@@ -558,7 +565,7 @@ unsigned int	ft_colour_1(int a, int b, unsigned int c0, unsigned int c1)
 	int	d[2];
 
 	d[0] = a;
-	d[1] = b;;
+	d[1] = b;
 	return (ft_colour_2(d, c0, c1));
 }
 
@@ -574,7 +581,8 @@ unsigned int	ft_colour(t_map *map, int i, int j)
 			ft_abs(1 * map->max / 8), 0xCCFFFFFF, 0x006600FF));
 	else if (map->mo[i][j].z <= (1 * map->max / 2))
 		return (ft_colour_1(ft_abs(map->mo[i][j].z - 1 * map->max / 8),
-			ft_abs(1 * map->max / 8 - 1 * map->max / 2), 0x006600FF, 0xFFFFCCFF));
+			ft_abs(1 * map->max / 8 - 1 * map->max / 2),
+			0x006600FF, 0xFFFFCCFF));
 	else if (map->mo[i][j].z <= (7 * map->max / 8))
 		return (ft_colour_1(ft_abs(map->mo[i][j].z - 1 * map->max / 2),
 			ft_abs(1 * map->max / 2 - 7 * map->max / 8),
@@ -723,7 +731,11 @@ void	ft_fill_map(t_map *map, char *mapfile)
 
 	fd = open(mapfile, O_RDONLY);
 	if (fd < 0)
+	{
+		ft_printf_fd(2, "%41CCould not open the mapfile, does it ");
+		ft_printf_fd(2, "exist and does it have read permissions?%0C\n");
 		exit(-1);
+	}
 	line = get_next_line(fd);
 	fdfmap = ft_strdup("");
 	while (line)
@@ -751,8 +763,8 @@ void	ft_init_map(t_map *map)
 	map->y = 0;
 	map->z = 4;
 	map->q = 64;
-	map->xs = 200;
-	map->ys = 200;
+	map->xs = 500;
+	map->ys = 400;
 	map->ax = 0;
 	map->ay = 0;
 	map->az = 0;
@@ -775,10 +787,14 @@ void	ft_free_double(void **ptr)
 
 void	ft_free(t_map *map)
 {
-	ft_free_split(map->m);
-	ft_free_double((void **)map->mo);
-	ft_free_double((void **)map->mr);
-	ft_free_double((void **)map->ms);
+	if (map->m)
+		ft_free_split(map->m);
+	if (map->mo)
+		ft_free_double((void **)map->mo);
+	if (map->mr)
+		ft_free_double((void **)map->mr);
+	if (map->ms)
+		ft_free_double((void **)map->ms);
 }
 
 void	ft_fdf2(t_max *max)
@@ -786,13 +802,13 @@ void	ft_fdf2(t_max *max)
 	if (!(max->img))
 	{
 		mlx_close_window(max->mlx);
-		puts(mlx_strerror(mlx_errno));
+		ft_printf_fd (2, "%s\n", mlx_strerror(mlx_errno));
 		exit(EXIT_FAILURE);
 	}
 	if (mlx_image_to_window(max->mlx, max->img, 0, 0) == -1)
 	{
 		mlx_close_window(max->mlx);
-		puts(mlx_strerror(mlx_errno));
+		ft_printf_fd (2, "%s\n", mlx_strerror(mlx_errno));
 		exit(EXIT_FAILURE);
 	}
 	mlx_loop_hook(max->mlx, ft_hook, max);
@@ -817,7 +833,7 @@ void	ft_fdf(t_max *max, char *mapfile)
 	mlx = mlx_init(1600, 900, "FDF", true);
 	if (!mlx)
 	{
-		puts(mlx_strerror(mlx_errno));
+		ft_printf_fd (2, "%s\n", mlx_strerror(mlx_errno));
 		exit(-999);
 	}
 	max->mlx = mlx;

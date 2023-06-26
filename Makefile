@@ -6,7 +6,7 @@
 #    By: okraus <okraus@student.42prague.com>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/03/04 15:40:17 by okraus            #+#    #+#              #
-#    Updated: 2023/06/18 13:05:35 by okraus           ###   ########.fr        #
+#    Updated: 2023/06/26 17:11:32 by okraus           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -54,7 +54,16 @@ SRC_DIR		=	src/
 
 # Pipex functions
 
-SRC_S	=		ft_fdf
+SRC_S		=	ft_fdf \
+				ft_colour1 \
+				ft_colour2 \
+				ft_colour3 \
+				ft_fill \
+				ft_free \
+				ft_hook \
+				ft_init \
+				ft_plot \
+				ft_update
 
 # Formating
 

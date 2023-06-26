@@ -6,7 +6,7 @@
 /*   By: okraus <okraus@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/04 15:43:08 by okraus            #+#    #+#             */
-/*   Updated: 2023/06/22 15:33:23 by okraus           ###   ########.fr       */
+/*   Updated: 2023/06/26 17:19:06 by okraus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,30 +39,28 @@
 // STRUCTURES
 // FDF structure
 
-// typedef struct map_s
+// typedef struct s_map
 // {
-// 	char	**m;		//map saved in array
-// 	int		w;			//width of map
-// 	int		h;			//height of map
-// 	int		p;			//player status 1-alive, 0 dead
-// 	int		px;			//player position on map the x axis
-// 	int		py;			//player position on map the y axis
-//						//add player direction?
-// 	int		ct;			//total number of collectibles
-//	int		cr;			//number of remaining collectibles
-// 	int		*c;			//collectible status 
-// 	int		*cx;		//collectible position on the x axis
-// 	int		*cy;		//collectible position on the y axis
-// 	int		et;			//total number of enemies
-//						//add enemy remaining?
-// 	int		*e;			//array of enemies 0 dead, 1 alive
-// 	int		*ex;		//enemy position on map the x axis
-// 	int		*ey;		//enemy position on map the y axis
-//						//add enemy direction?
-//	int		x;			// exit status 0 closed, 1 open
-//	int		xx;			// exit X
-//	int		xy;			// exit max->r of steps player did
-// } map_t;
+// 	char	**m;	//
+// 	t_point	**mo;	//original map coordinates
+// 	t_point	**mr;	//rotated orig
+// 	t_coord	**ms;	//screen
+// 	int		w;		//width of map
+// 	int		h;		//height of map
+// 	int		d;		//distance of points
+// 	int		max;	//max height on map
+// 	int		min;	//min height on map
+// 	int		xs;		//x shift
+// 	int		ys;		//y shift
+// 	int		p;		//projection (0 isometric, 1 cabinet)
+// 	int		x;
+// 	int		y;
+// 	int		z;		//level of zoom
+// 	double	q;		//height of stuff
+// 	double	ax;
+// 	double	ay;		//angles of rotation around x/y/z axis;
+// 	double	az;
+// }	t_map;
 
 // typedef struct s_point
 // {
@@ -104,24 +102,24 @@ typedef struct s_line
 
 typedef struct s_map
 {
-	char	**m;	//
-	t_point	**mo;	//original map coordinates
-	t_point	**mr;	//rotated orig
-	t_coord	**ms;	//screen
-	int		w;		//width of map
-	int		h;		//height of map
-	int		d;		//distance of points
-	int		max;	//max height on map
-	int		min;	//min height on map
-	int		xs;		//x shift
-	int		ys;		//y shift
-	int		p;		//projection (0 isometric, 1 cabinet)
+	char	**m;
+	t_point	**mo;
+	t_point	**mr;
+	t_coord	**ms;
+	int		w;
+	int		h;
+	int		d;
+	int		max;
+	int		min;
+	int		xs;
+	int		ys;
+	int		p;
 	int		x;
 	int		y;
-	int		z;		//level of zoom
-	double	q;		//height of stuff
+	int		z;
+	double	q;
 	double	ax;
-	double	ay;		//angles of rotation around x/y/z axis;
+	double	ay;
 	double	az;
 }	t_map;
 
@@ -134,6 +132,50 @@ typedef struct s_max
 
 // PROTOTYPES
 
-//	ft_draw
+//	ft_hook
+void			ft_hook(void *param);
+void			ft_hook2(t_max	*max);
+void			ft_super_swap(int a[3], int b[3], unsigned int c[2]);
+void			ft_rotate_map(double angle, double *x, double *y);
+
+//	ft_colour1
+unsigned int	ft_mix_colour(int x[3], int y[3], unsigned int c[2]);
+
+//	ft_plot
+void			ft_plot_line_low(t_max *max, t_line l);
+void			ft_plot_line_high(t_max *max, t_line l);
+void			ft_plot_line_hor(t_max *max, int i, int j);
+void			ft_plot_line_ver(t_max *max, int i, int j);
+void			ft_place_line(t_max *max, int i, int j);
+
+//	ft_update
+void			ft_update_map(t_map *map);
+void			ft_update_screen_isometric(t_map *map);
+void			ft_update_screen_cabinet(t_map *map);
+void			ft_update_screen(t_map *map);
+
+//	ft_colour2
+void			ft_black(t_max *max);
+void			ft_colourize(void *param);
+int				ft_get_color(char *str);
+
+//	ft_init
+void			ft_init_row(t_map *map, int i);
+void			ft_init_coord(t_map *map);
+void			ft_init_map(t_map *map);
+
+//	ft_colour3
+unsigned int	ft_colour(t_map *map, int i, int j);
+
+//	ft_fill
+void			ft_screen_row(t_map *map, int i);
+void			ft_fill_screen(t_map *map);
+void			ft_fill_map(t_map *map, char *mapfile);
+void			ft_fill_row(t_map *map, char **row, int i);
+void			ft_fill_coord(t_map *map);
+
+//	ft_free
+void			ft_free_double(void **ptr);
+void			ft_free(t_map *map);
 
 #endif
